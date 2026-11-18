@@ -1,0 +1,505 @@
+
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Deutsch Quiz A1-A2</title>
+
+<style>
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  padding: 20px 12px;
+  font-family: Arial, sans-serif;
+  background: #f3f5f9;
+  color: #263248;
+}
+
+.container {
+  max-width: 600px;
+  margin: auto;
+  background: white;
+  padding: 22px 16px;
+  border-radius: 16px;
+  box-shadow: 0 3px 15px #00000012;
+}
+
+h1 {
+  text-align: center;
+  font-size: 23px;
+  color: #243b60;
+  margin-bottom: 8px;
+}
+
+.subtitle {
+  text-align: center;
+  color: #777;
+  font-size: 14px;
+  margin-bottom: 22px;
+}
+
+.progress-info {
+  display: flex;
+  justify-content: space-between;
+  font-size: 13px;
+  margin-bottom: 9px;
+  color: #555;
+}
+
+.progress {
+  height: 7px;
+  background: #e7eaf0;
+  border-radius: 20px;
+  overflow: hidden;
+  margin-bottom: 25px;
+}
+
+.progress-bar {
+  height: 100%;
+  width: 0%;
+  background: #4169a1;
+  transition: width .3s;
+}
+
+.question {
+  font-size: 19px;
+  font-weight: bold;
+  line-height: 1.5;
+  margin-bottom: 20px;
+}
+
+.option {
+  width: 100%;
+  display: block;
+  text-align: left;
+  padding: 14px;
+  margin: 10px 0;
+  border: 1px solid #dce1e9;
+  border-radius: 10px;
+  background: #fff;
+  color: #263248;
+  font-size: 15px;
+  cursor: pointer;
+  transition: .2s;
+}
+
+.option:hover:not(:disabled) {
+  background: #edf2fa;
+  border-color: #4169a1;
+}
+
+.option:disabled {
+  cursor: default;
+  opacity: 1;
+}
+
+.option.correct {
+  background: #e3f5e9;
+  border: 1px solid #36a568;
+  color: #176b3b;
+}
+
+.option.wrong {
+  background: #fde8e8;
+  border: 1px solid #dc5555;
+  color: #a52d2d;
+}
+
+.feedback {
+  display: none;
+  padding: 14px;
+  margin-top: 18px;
+  border-radius: 10px;
+  line-height: 1.6;
+  font-size: 14px;
+}
+
+.feedback.good {
+  display: block;
+  background: #e3f5e9;
+  color: #176b3b;
+}
+
+.feedback.bad {
+  display: block;
+  background: #fde8e8;
+  color: #a52d2d;
+}
+
+.next-btn, .restart-btn {
+  width: 100%;
+  padding: 14px;
+  margin-top: 20px;
+  border: none;
+  border-radius: 10px;
+  background: #345b91;
+  color: white;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.next-btn:disabled {
+  background: #aab5c5;
+  cursor: default;
+}
+
+.result {
+  display: none;
+  text-align: center;
+  padding: 20px 5px;
+}
+
+.result h2 {
+  color: #345b91;
+}
+
+.score {
+  font-size: 42px;
+  font-weight: bold;
+  color: #345b91;
+  margin: 20px 0;
+}
+
+.result p {
+  line-height: 1.7;
+  color: #555;
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<h1>Deutsch Quiz</h1>
+<div class="subtitle">A1 – A2 | Teste dein Wissen!</div>
+
+<div id="quiz">
+
+<div class="progress-info">
+  <span id="question-number">Frage 1 von 10</span>
+  <span id="answered">0 / 10</span>
+</div>
+
+<div class="progress">
+  <div class="progress-bar" id="progress-bar"></div>
+</div>
+
+<div class="question" id="question"></div>
+
+<div id="options"></div>
+
+<div class="feedback" id="feedback"></div>
+
+<button class="next-btn" id="next" disabled>
+  Nächste Frage
+</button>
+
+</div>
+
+<div class="result" id="result">
+  <h2>Quiz beendet!</h2>
+  <div class="score" id="score"></div>
+  <p id="result-message"></p>
+  <button class="restart-btn" onclick="restartQuiz()">
+    Noch einmal versuchen
+  </button>
+</div>
+
+</div>
+
+<script>
+
+const questions = [
+
+{
+q: "Was bedeutet „Da bin ich wieder“?",
+o: [
+"Ich bin zurück.",
+"Ich gehe jetzt weg.",
+"Ich komme zum ersten Mal.",
+"Ich bleibe hier."
+],
+a: 0,
+e: "Wieder da sein bedeutet, zurückgekommen zu sein."
+},
+
+{
+q: "Was bedeutet „jemanden treffen“?",
+o: [
+"Jemandem begegnen.",
+"Jemandem etwas schenken.",
+"Jemanden anrufen.",
+"Jemandem etwas erzählen."
+],
+a: 0,
+e: "Treffen bedeutet hier, eine Person zu sehen oder ihr zu begegnen."
+},
+
+{
+q: "Wonach fragt man mit „Wann“?",
+o: [
+"Nach einem Ort.",
+"Nach einem Zeitpunkt.",
+"Nach einem Grund.",
+"Nach einer Person."
+],
+a: 1,
+e: "Wann fragt nach der Zeit oder einem Zeitpunkt."
+},
+
+{
+q: "Was bedeutet „gerade eben“?",
+o: [
+"Vor langer Zeit.",
+"Vor wenigen Augenblicken.",
+"In einigen Tagen.",
+"Jeden Tag."
+],
+a: 1,
+e: "Gerade eben bedeutet: vor ganz kurzer Zeit."
+},
+
+{
+q: "Was bedeutet „jemanden überraschen“?",
+o: [
+"Jemandem eine unerwartete Freude machen.",
+"Jemandem etwas verbieten.",
+"Mit jemandem streiten.",
+"Jemanden vergessen."
+],
+a: 0,
+e: "Eine Überraschung ist etwas, womit man nicht gerechnet hat."
+},
+
+{
+q: "Er ___ dich überraschen. Welche Form passt?",
+o: [
+"wollte",
+"willst",
+"wollen",
+"gewollt"
+],
+a: 0,
+e: "Wollte ist das Präteritum von wollen und passt zu er."
+},
+
+{
+q: "Sie wartet ___ ihren Bruder.",
+o: [
+"an",
+"auf",
+"mit",
+"für"
+],
+a: 1,
+e: "Die richtige Verbindung lautet: auf jemanden warten."
+},
+
+{
+q: "Welcher Satz ist grammatisch richtig?",
+o: [
+"Ich rufe dich an, bevor ich losfahre.",
+"Ich rufe dich an, bevor losfahre ich.",
+"Ich rufe dich an, bevor ich fahre los.",
+"Ich rufe dich an, bevor fahre ich los."
+],
+a: 0,
+e: "Nach bevor steht das konjugierte Verb am Ende des Nebensatzes."
+},
+
+{
+q: "Was bedeutet „Er hatte einen Kameraden dabei“?",
+o: [
+"Er war allein.",
+"Ein Kamerad war bei ihm.",
+"Er suchte einen Kameraden.",
+"Er rief einen Kameraden an."
+],
+a: 1,
+e: "Jemanden dabei haben bedeutet, dass jemand bei einem ist oder mitkommt."
+},
+
+{
+q: "„Hatte“ ist eine Form von haben im Präsens.",
+o: [
+"Richtig",
+"Falsch"
+],
+a: 1,
+e: "Hatte ist Präteritum von haben. Im Präsens heißt es hat."
+}
+
+];
+
+let current = 0;
+let score = 0;
+let answeredCount = 0;
+let selected = false;
+
+const questionEl = document.getElementById("question");
+const optionsEl = document.getElementById("options");
+const feedbackEl = document.getElementById("feedback");
+const nextBtn = document.getElementById("next");
+
+function showQuestion() {
+
+selected = false;
+
+const q = questions[current];
+
+document.getElementById("question-number").textContent =
+"Frage " + (current + 1) + " von " + questions.length;
+
+document.getElementById("answered").textContent =
+answeredCount + " / " + questions.length;
+
+document.getElementById("progress-bar").style.width =
+(current / questions.length * 100) + "%";
+
+questionEl.textContent = q.q;
+
+optionsEl.innerHTML = "";
+
+feedbackEl.className = "feedback";
+feedbackEl.innerHTML = "";
+
+nextBtn.disabled = true;
+
+q.o.forEach((option, index) => {
+
+const btn = document.createElement("button");
+
+btn.className = "option";
+btn.textContent =
+String.fromCharCode(65 + index) + ". " + option;
+
+btn.onclick = () => checkAnswer(index, btn);
+
+optionsEl.appendChild(btn);
+
+});
+
+nextBtn.textContent =
+current === questions.length - 1
+? "Ergebnis anzeigen"
+: "Nächste Frage";
+
+}
+
+function checkAnswer(index, clickedButton) {
+
+if (selected) return;
+
+selected = true;
+answeredCount++;
+
+const q = questions[current];
+const buttons = optionsEl.querySelectorAll(".option");
+
+buttons.forEach(btn => btn.disabled = true);
+
+if (index === q.a) {
+
+score++;
+
+clickedButton.classList.add("correct");
+
+feedbackEl.className = "feedback good";
+
+feedbackEl.innerHTML =
+"<strong>✓ Richtig!</strong><br>" + q.e;
+
+} else {
+
+clickedButton.classList.add("wrong");
+
+buttons[q.a].classList.add("correct");
+
+feedbackEl.className = "feedback bad";
+
+feedbackEl.innerHTML =
+"<strong>✗ Leider falsch!</strong><br>" +
+"Richtige Antwort: <strong>" +
+q.o[q.a] +
+"</strong><br>" + q.e;
+
+}
+
+document.getElementById("answered").textContent =
+answeredCount + " / " + questions.length;
+
+nextBtn.disabled = false;
+
+}
+
+nextBtn.onclick = () => {
+
+if (!selected) return;
+
+if (current < questions.length - 1) {
+
+current++;
+showQuestion();
+
+} else {
+
+showResult();
+
+}
+
+};
+
+function showResult() {
+
+document.getElementById("quiz").style.display = "none";
+
+const result = document.getElementById("result");
+result.style.display = "block";
+
+document.getElementById("progress-bar").style.width = "100%";
+
+document.getElementById("score").textContent =
+score + " / " + questions.length;
+
+let message = "";
+
+if (score === 10) {
+message = "Ausgezeichnet! Du hast alle Fragen richtig beantwortet.";
+} else if (score >= 8) {
+message = "Sehr gut! Du hast den Dialog gut verstanden.";
+} else if (score >= 5) {
+message = "Gut gemacht! Übe noch ein bisschen.";
+} else {
+message = "Weiter üben! Wiederhole die Wörter und die Grammatik.";
+}
+
+document.getElementById("result-message").textContent = message;
+
+}
+
+function restartQuiz() {
+
+current = 0;
+score = 0;
+answeredCount = 0;
+selected = false;
+
+document.getElementById("result").style.display = "none";
+document.getElementById("quiz").style.display = "block";
+
+showQuestion();
+
+}
+
+showQuestion();
+
+</script>
+
+</body>
+</html>
